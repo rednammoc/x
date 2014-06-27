@@ -41,10 +41,10 @@ x () {
     }
 
     # Parse/Execute commandline-arguments
-	if [ "$1" == "-r" ] ; then
+    if [ "$1" == "-r" ] ; then
         local path=$(get_entry "$2")
         [ -n "${path}" ] && cd "${path}"
-	elif [ "$1" == "-l" ] ; then
+    elif [ "$1" == "-l" ] ; then
         local records=0; local line_count=$(wc -l < "${_X_LIST}")
         if [ -f "${_X_LIST}" ] && [[ "${line_count}" -gt 0 ]] ; then
             print_entry "Index" "Folder" 
@@ -52,8 +52,8 @@ x () {
             records=$(wc -l < "${_X_LIST}")
         fi
         echo "(Profile: $(basename "${_X_LIST}"), Records: ${records})"
-	elif [ "$1" == "-c" ] ; then
-		> "${_X_LIST}"
+    elif [ "$1" == "-c" ] ; then
+        > "${_X_LIST}"
     elif ( [ "$1" == "-a" ] || [ "$1" == "-p" ] ) ; then
         local path="${2}" ; local index=0
         if [ -z "${path}" ] ; then
@@ -67,7 +67,7 @@ x () {
             # Remove trailing slash/dot
             path="${path%/.}" ; path="${path%/}"
         fi
-		
+
         # Check for duplicate entries
         if [ -f "${_X_LIST}" ] ; then
             if grep -Fxq "${path}" "${_X_LIST}" ; then
