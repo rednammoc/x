@@ -5,7 +5,7 @@ Usage:
 
 Options:
 
-	-a [path] 	    append path to current profile. (default: current path)
+	-a [path] 	    append path to list. (default: current path)
 	-p [path] 	    prepend path to list. (default: current path)
  	-r [index]	    restores nth path from list.
  	-d [index]	    deletes nth path from list.
