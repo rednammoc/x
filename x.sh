@@ -76,7 +76,6 @@ x () {
     elif [ "$1" == "-l" ] ; then
         local records=0; local line_count=$(wc -l < "${_X_LIST}")
         if [ -f "${_X_LIST}" ] && [[ "${line_count}" -gt 0 ]] ; then
-            print_entry "Index" "Folder"
             cat -n "${_X_LIST}"
             records=$(wc -l < "${_X_LIST}")
         fi
@@ -108,14 +107,11 @@ x () {
 
         if   [ "$1" == "-a" ] ; then
             echo "${path}" >> "${_X_LIST}"
-            index=$(wc -l < "${_X_LIST}")
         elif [ "$1" == "-p" ] ; then
             echo "${path}" |
                 cat - "${_X_LIST}" > "${_X_LIST}.tmp" &&
                 mv "${_X_LIST}.tmp" "${_X_LIST}"
-            index=1
         fi
-        print_entry "${index}" "${path}"
     elif [ "$1" == "-d" ] ; then
         local index="$2" ; local path=$(get_entry "${index}")
         [ -z "${path}" ] && return 1
