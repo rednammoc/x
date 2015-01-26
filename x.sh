@@ -126,16 +126,14 @@ x () {
         echo
         echo "Options:"
         echo 
-        echo "  -a [folder] || -p [folder]"
-        echo "    append or prepend folder to current profile. "
-        echo "    when no folder is specified, the current folder "
-        echo "    will be used."
-        echo "  -l  list folders within current profile."
-        echo "  -r <number>  restore nth folder from the current profile."
-        echo "  -d <number>  delete nth folder from the current profile." 
-        echo "  -c  clear current profile."
-        echo "  -h  show this help."
+        echo "  -a [path]     append path to list. (default: current path)"
+        echo "  -p [path]     prepend path to list. (default: current path)"
+        echo "  -l            show list."
+        echo "  -r <index>    restore nth path from list."
+        echo "  -d <index>    deletes nth path from list."
+        echo "  -c            clear list."
+        echo "  -i            show info."
+        echo "  -h            show this help."
         echo
-
     fi
 }

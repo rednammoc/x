@@ -1,16 +1,18 @@
 Store and navigate to paths within a list.  
 
-Usage:
-	x [OPTION...]
+Usage: 
+	x [-aplrdci] [args]
 
 Options:
 
 	-a [path] 	    append path to list. (default: current path)
 	-p [path] 	    prepend path to list. (default: current path)
- 	-r [index]	    restores nth path from list.
- 	-d [index]	    deletes nth path from list.
-	-c 		        clear list.
-	-h 		        show this help.
+        -l                  show list.
+ 	-r <index>	    restores nth path from list.
+ 	-d <index>	    deletes nth path from list.
+	-c 		    clear list.
+        -i                  show profile info.
+	-h 		    show this help.
 
 Examples:
 
