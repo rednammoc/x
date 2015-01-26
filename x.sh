@@ -74,12 +74,10 @@ x () {
         fi
         [ -n "${path}" ] && cd "${path}"
     elif [ "$1" == "-l" ] ; then
-        local records=0; local line_count=$(wc -l < "${_X_LIST}")
+        local line_count=$(wc -l < "${_X_LIST}")
         if [ -f "${_X_LIST}" ] && [[ "${line_count}" -gt 0 ]] ; then
             cat -n "${_X_LIST}"
-            records=$(wc -l < "${_X_LIST}")
         fi
-        echo "(Profile: $(basename "${_X_LIST}"), Records: ${records})"
     elif [ "$1" == "-c" ] ; then
         > "${_X_LIST}"
     elif ( [ "$1" == "-a" ] || [ "$1" == "-p" ] ) ; then
@@ -117,7 +115,27 @@ x () {
         [ -z "${path}" ] && return 1
         sed -e "${index}d" "${_X_LIST}" > "${_X_LIST}.tmp" &&
             mv "${_X_LIST}.tmp"  "${_X_LIST}"
+    elif [ "$1" == "-i" ] ; then
+        local records=0; 
+        if [ -f "${_X_LIST}" ] ; then 
+            records=$(wc -l < "${_X_LIST}")
+        fi
+        echo "(Profile: $(basename "${_X_LIST}"), Records: ${records})"
     else
-        echo "Usage: x [-aplrdc] [args]"
+        echo "Usage: x [-aplrdci] [args]"
+        echo
+        echo "Options:"
+        echo 
+        echo "  -a [folder] || -p [folder]"
+        echo "    append or prepend folder to current profile. "
+        echo "    when no folder is specified, the current folder "
+        echo "    will be used."
+        echo "  -l  list folders within current profile."
+        echo "  -r <number>  restore nth folder from the current profile."
+        echo "  -d <number>  delete nth folder from the current profile." 
+        echo "  -c  clear current profile."
+        echo "  -h  show this help."
+        echo
+
     fi
 }
