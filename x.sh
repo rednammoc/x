@@ -1,7 +1,7 @@
 #!/bin/bash
 # @name: x.sh
 # @version: 0.97
-# @description: store and jump. 
+# @description: store and jump.
 # @author: rednammoc
 # @date: 14/06/25
 
@@ -14,14 +14,14 @@ x () {
     # Initialize/Load configuration
     local _X_CONFIG_DIR=$(dirname "${_X_CONFIG}")
     ! [ -d "${_X_CONFIG_DIR}" ] && mkdir -p "${_X_CONFIG_DIR}"
-    ! [ -f "${_X_CONFIG}" ] && 
+    ! [ -f "${_X_CONFIG}" ] &&
         echo "_X_LIST=\"${_X_CONFIG_DIR}/.x\"" >> "${_X_CONFIG}"
     . "${_X_CONFIG}"
 
     # Assert that index is 1 <= x <= size(list)
     validate_index () {
-        local index="${1}" ; local line_count=$(wc -l < "${_X_LIST}") ; 
-        if ! [[ "${index}" =~ ^[1-9][0-9]*$ ]] || 
+        local index="${1}" ; local line_count=$(wc -l < "${_X_LIST}") ;
+        if ! [[ "${index}" =~ ^[1-9][0-9]*$ ]] ||
               [ "${index}" -gt ${line_count} ] ; then
             echo "Illegal argument." >&2
             return 1
@@ -40,14 +40,43 @@ x () {
         printf "%+6s  ${path}\n" "${index}"
     }
 
+    # Ask the user for "Y" or "N" until valid answer is given. 
+    # 
+    # @param question to ask as string.
+    # @param optional default answer (Y,N).
+    # @returns 1 when the answer was Y or y. 
+    # @returns 0 when the answer was N or n. 
+    #
+    # (thanks to davejamesmiller for this little snippet.)
+    ask () {
+      while true; do
+        if   [ "${2:-}" = "Y" ]; then prompt="Y/n"; default=Y;
+        elif [ "${2:-}" = "N" ]; then prompt="y/N"; default=N;
+        else                          prompt="y/n"; default= ; fi
+        read -p "$1 [$prompt] " REPLY                 # Ask the question
+        if [ -z "$REPLY" ]; then REPLY=${default}; fi # Default?
+        case "$REPLY" in                              # Check if reply is valid
+          Y*|y*) return 0 ;;
+          N*|n*) return 1 ;;
+        esac
+      done
+    }
+
     # Parse/Execute commandline-arguments
     if [ "$1" == "-r" ] ; then
         local path=$(get_entry "$2")
+        [ -z "${path}" ] && return 1
+        if ! [ -d "${path}" ] ; then
+          echo "The specified entry '${path}' does not exist anymore!"
+          local question="Do you want to remove the entry from your current profile?"
+          if ask "${question}" Y ; then x -d "${2}"; return 0; fi
+          return 1;
+        fi
         [ -n "${path}" ] && cd "${path}"
     elif [ "$1" == "-l" ] ; then
         local records=0; local line_count=$(wc -l < "${_X_LIST}")
         if [ -f "${_X_LIST}" ] && [[ "${line_count}" -gt 0 ]] ; then
-            print_entry "Index" "Folder" 
+            print_entry "Index" "Folder"
             cat -n "${_X_LIST}"
             records=$(wc -l < "${_X_LIST}")
         fi
@@ -78,20 +107,19 @@ x () {
         fi
 
         if   [ "$1" == "-a" ] ; then
-            echo "${path}" >> "${_X_LIST}"	
-            index=$(wc -l < "${_X_LIST}") 
-        elif [ "$1" == "-p" ] ; then 
-            echo "${path}" | 
+            echo "${path}" >> "${_X_LIST}"
+            index=$(wc -l < "${_X_LIST}")
+        elif [ "$1" == "-p" ] ; then
+            echo "${path}" |
                 cat - "${_X_LIST}" > "${_X_LIST}.tmp" &&
                 mv "${_X_LIST}.tmp" "${_X_LIST}"
-            index=1 
+            index=1
         fi
         print_entry "${index}" "${path}"
     elif [ "$1" == "-d" ] ; then
         local index="$2" ; local path=$(get_entry "${index}")
         [ -z "${path}" ] && return 1
-        print_entry "${index}" "${path}"
-        sed -e "${index}d" "${_X_LIST}" > "${_X_LIST}.tmp" && 
+        sed -e "${index}d" "${_X_LIST}" > "${_X_LIST}.tmp" &&
             mv "${_X_LIST}.tmp"  "${_X_LIST}"
     else
         echo "Usage: x [-aplrdc] [args]"
